@@ -1,0 +1,40 @@
+export const themes = ["light", "dark", "bold"];
+
+export const themeVariants = {
+  light: {
+    wrapper: "bg-white text-gray-900",
+    hero: "bg-white",
+    features: "bg-gray-50",
+    featureIcon: "bg-indigo-50 text-indigo-600",
+    featureText: "text-gray-600",
+    footer: "bg-gray-900 text-white",
+    footerText: "text-gray-400",
+    footerHover: "hover:text-white",
+    ctaButton: "bg-gradient-to-br from-indigo-600 via-blue-600 to-blue-700 text-white shadow-[0_8px_30px_rgb(79,70,229,0.2)] backdrop-blur-sm border border-indigo-500/30 hover:shadow-[0_8px_30px_rgb(79,70,229,0.3)] hover:border-indigo-400 hover:from-indigo-500 hover:via-blue-500 hover:to-blue-600",
+    ctaButtonText: "text-white font-semibold",
+  },
+  dark: {
+    wrapper: "bg-gray-900 text-white",
+    hero: "bg-gray-900",
+    features: "bg-gray-800",
+    featureIcon: "bg-indigo-900 text-indigo-400",
+    featureText: "text-gray-300",
+    footer: "bg-black text-white",
+    footerText: "text-gray-400",
+    footerHover: "hover:text-white",
+    ctaButton: "bg-gradient-to-br from-purple-500 via-fuchsia-500 to-pink-500 text-white shadow-[0_8px_30px_rgb(168,85,247,0.2)] backdrop-blur-sm border border-purple-400/30 hover:shadow-[0_8px_30px_rgb(168,85,247,0.3)] hover:border-purple-300 hover:from-purple-400 hover:via-fuchsia-400 hover:to-pink-400",
+    ctaButtonText: "text-white font-semibold",
+  },
+  bold: {
+    wrapper: "bg-yellow-50 text-black",
+    hero: "bg-yellow-50",
+    features: "bg-yellow-100",
+    featureIcon: "bg-yellow-500 text-white",
+    featureText: "text-gray-700",
+    footer: "bg-black text-white",
+    footerText: "text-gray-400",
+    footerHover: "hover:text-white",
+    ctaButton: "bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-500 text-white shadow-[0_8px_30px_rgb(245,158,11,0.2)] backdrop-blur-sm border border-orange-400/30 hover:shadow-[0_8px_30px_rgb(245,158,11,0.3)] hover:border-orange-300 hover:from-orange-400 hover:via-amber-400 hover:to-yellow-400",
+    ctaButtonText: "text-white font-semibold",
+  },
+}; 
