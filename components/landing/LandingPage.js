@@ -21,18 +21,18 @@ export default function LandingPage({ form = {} }) {
 
   return (
     <div className={`${themeStyles.wrapper} min-h-0 overflow-hidden`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <header className="py-6">
+      <div>
+        <header className={`px-6 py-4 ${themeStyles.header} backdrop-blur-md sticky top-0 z-50`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-8">
               {logo ? (
                 <img
                   src={logo}
                   alt={title}
-                  className="max-h-[50px]"
+                  className={`max-h-[50px] ${theme === 'dark' ? 'invert brightness-0' : ''}`}
                 />
               ) : (
-                <h1 className={themeStyles.textPrimary}>
+                <h1 className={`text-2xl font-bold ${themeStyles.textPrimary}`}>
                   {title}
                 </h1>
               )}

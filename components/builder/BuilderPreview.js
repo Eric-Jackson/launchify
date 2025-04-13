@@ -1,8 +1,7 @@
 import { useState, useRef } from "react";
 import { Download, DownloadCloud, Twitter, Linkedin, Github } from "lucide-react";
 import LandingPage from "../landing/LandingPage";
-import { themes } from "../../utils/theme";
-import Header from "../Header";
+import { themeVariants } from "../../utils/theme";
 
 export default function BuilderPreview({ form, onFormChange }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -98,14 +97,12 @@ export default function BuilderPreview({ form, onFormChange }) {
         body: JSON.stringify(form),
       });
 
-      const result = await res.json();
-
-      if (result.url) {
-        window.open(result.url, "_blank");
-      } else {
-        alert("Deployment failed 😢");
-        console.error(result);
+      if (!res.ok) {
+        throw new Error("Deployment failed");
       }
+
+      const data = await res.json();
+      window.open(data.url, "_blank");
     } catch (error) {
       console.error("Deployment error:", error);
       alert("Deployment failed 😢");
@@ -135,8 +132,7 @@ export default function BuilderPreview({ form, onFormChange }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-white z-50">
-      <Header />
+    <div className="bg-white">
       {/* Header */}
       <div className="h-14 border-b flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
@@ -194,7 +190,7 @@ export default function BuilderPreview({ form, onFormChange }) {
                     form.theme === "dark" ? "border-indigo-500 bg-indigo-50" : "border-gray-200 hover:border-gray-300"
                   }`}
                 >
-                  <div className="w-4 h-4 rounded-full bg-gray-900 border border-gray-700" />
+                  <div className="w-4 h-4 rounded-full bg-slate-900 border border-slate-700" />
                   <span className="text-sm">Dark</span>
                 </button>
                 <button
@@ -340,27 +336,27 @@ export default function BuilderPreview({ form, onFormChange }) {
                           <div className="text-sm text-gray-500 line-clamp-1">{feature.description}</div>
                         )}
                       </div>
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-2">
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRemoveFeature(index);
-                          }}
-                          className="w-6 h-6 rounded-full text-gray-400 hover:text-gray-600 flex items-center justify-center"
+                          onClick={() => handleRemoveFeature(index)}
+                          className="p-1.5 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition"
                           aria-label="Remove feature"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
                         </button>
-                        <svg 
-                          xmlns="http://www.w3.org/2000/svg" 
-                          className={`h-5 w-5 text-gray-400 ${editingFeature === index ? 'rotate-180' : ''}`}
-                          viewBox="0 0 20 20" 
-                          fill="currentColor"
+                        <button
+                          onClick={() => toggleFeatureEdit(index)}
+                          className={`p-1.5 rounded-full ${
+                            editingFeature === index ? "bg-yellow-100 text-yellow-600" : "bg-gray-100 text-gray-600"
+                          } hover:bg-yellow-200 transition`}
+                          aria-label="Edit feature"
                         >
-                          <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                        </svg>
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                        </button>
                       </div>
                     </div>
                     {editingFeature === index && (
@@ -455,21 +451,42 @@ export default function BuilderPreview({ form, onFormChange }) {
 
         {/* Preview */}
         <div className="flex-1 overflow-auto p-4">
-          <div className="rounded-lg border shadow-lg overflow-hidden flex flex-col">
+          <div className="rounded-lg border shadow-lg overflow-hidden flex flex-col relative">
             {/* Browser Chrome */}
-            <div className="h-8 border-b flex items-center px-4 gap-2 bg-gray-50 flex-shrink-0">
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 rounded-full bg-red-500" />
-                <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                <div className="w-3 h-3 rounded-full bg-green-500" />
+            <div className="h-10 border-b flex items-center px-4 gap-2 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-red-500 shadow-sm" />
+                <div className="w-3 h-3 rounded-full bg-yellow-500 shadow-sm" />
+                <div className="w-3 h-3 rounded-full bg-green-500 shadow-sm" />
               </div>
-              <div className="flex-1 text-center text-sm text-gray-500">
-                {form.title || "Preview"}
+              <div className="flex-1 flex items-center justify-center">
+                <div className="flex items-center gap-2 bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a5 5 0 1110 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
+                  </svg>
+                  <span className="text-sm text-gray-600 font-medium">
+                    {form.title || "Preview"}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button className="p-1 rounded-full hover:bg-white/50 transition">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5h-4m4 0v-4m0 4l-5-5" />
+                  </svg>
+                </button>
+                <button className="p-1 rounded-full hover:bg-white/50 transition">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                </button>
               </div>
             </div>
             {/* Preview Content */}
-            <div className="flex-1 overflow-auto">
-              <LandingPage form={form} />
+            <div className="flex-1 overflow-auto relative">
+              <div className="w-full">
+                <LandingPage form={form} />
+              </div>
             </div>
           </div>
         </div>
