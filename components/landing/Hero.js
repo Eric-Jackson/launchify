@@ -1,9 +1,9 @@
 import CTAButton from "../../components/CTAButton";
-import { themeVariants } from "../../utils/theme";
+import { generatedThemeVariants } from "../../utils/theme";
 import { motion } from "framer-motion";
 
 export default function Hero({ title, description, ctaText, ctaLink, theme = "light" }) {
-  const themeStyles = themeVariants[theme];
+  const themeStyles = generatedThemeVariants[theme];
 
   return (
     <section className="relative py-20 overflow-hidden">

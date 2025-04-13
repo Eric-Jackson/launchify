@@ -1,23 +1,22 @@
 import Hero from "./Hero";
 import Features from "./Features";
 import Footer from "./Footer";
-import { themeVariants } from "../../utils/theme";
+import { generatedThemeVariants } from "../../utils/theme";
 import { Twitter, Linkedin, Github } from "lucide-react";
 
-export default function LandingPage({ form = {} }) {
+export default function LandingPage({ form = {}, theme = "light" }) {
   const { 
     title = "", 
     description = "", 
     features = [], 
     ctaText = "", 
     ctaLink = "", 
-    theme = "light", 
     logo = "",
     twitter = "",
     linkedin = "",
     github = ""
   } = form;
-  const themeStyles = themeVariants[theme];
+  const themeStyles = generatedThemeVariants[theme];
 
   return (
     <div className={`${themeStyles.wrapper} min-h-0 overflow-hidden`}>

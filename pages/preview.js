@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { generateHTML } from "../lib/htmlTemplate";
 import { downloadZip } from "../lib/zipPage";
 import Header from "../components/Header";
+import { generatedThemeVariants } from "../utils/theme";
 
 export default function Preview() {
   const router = useRouter();
@@ -21,23 +22,10 @@ export default function Preview() {
     }
   }, [router.isReady, router.query]);
 
-  if (!data) return <div className="p-8">Loading preview...</div>;
-
-  // Theme variants for styling
-  const themeVariants = {
-    light: {
-      wrapper: "bg-white text-gray-900 font-sans",
-    },
-    dark: {
-      wrapper: "bg-gray-900 text-white font-mono",
-    },
-    bold: {
-      wrapper: "bg-yellow-50 text-black font-lobster",
-    },
-  };
+  if (!data) return <div className="p-8 text-gray-900 dark:text-white">Loading preview...</div>;
 
   const theme = data.theme || "light";
-  const styles = themeVariants[theme];
+  const themeStyles = generatedThemeVariants[theme];
 
   // Handle HTML download
   const handleDownload = () => {
@@ -72,117 +60,76 @@ export default function Preview() {
   };
 
   return (
-    <>
-      <main className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100 text-gray-900">
-        {/* Header */}
-        <Header />
+    <main className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      {/* Header */}
+      <Header />
 
-        {/* Edit Settings Button */}
-        <div className="max-w-5xl mx-auto px-6 mt-6">
-          <button
-            onClick={() => {
-              router.push({
-                pathname: "/generator",
-                query: {
-                  ...data,
-                  features: JSON.stringify(data.features),
-                },
-              });
-            }}
-            className="mb-6 inline-flex items-center gap-2 bg-white text-black border border-gray-300 hover:bg-gray-100 px-4 py-2 rounded"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path d="M17 9H7.83l3.58-3.59L10 4l-6 6 6 6 1.41-1.41L7.83 11H17V9z" />
-            </svg>
-            Edit Settings
-          </button>
-        </div>
+      {/* Edit Settings Button */}
+      <div className="max-w-5xl mx-auto px-6 mt-6">
+        <button
+          onClick={() => router.push("/generator")}
+          className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+        >
+          ← Back to Editor
+        </button>
+      </div>
 
-        {/* Preview Section */}
-        <div className="max-w-5xl mx-auto px-6 py-16">
-          <div className="bg-white shadow-2xl rounded-xl overflow-hidden border ring-1 ring-gray-200 transition-all duration-500 ease-out animate-fade-in">
-            {/* Browser-like Header */}
-            <div className="bg-gray-100 px-4 py-2 border-b flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-red-400"></span>
-                <span className="w-3 h-3 rounded-full bg-yellow-400"></span>
-                <span className="w-3 h-3 rounded-full bg-green-500"></span>
-              </div>
-              <div className="text-sm text-gray-500 font-mono">launchify.app</div>
+      {/* Preview Content */}
+      <div className="max-w-5xl mx-auto px-6 py-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Preview</h1>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={handleDownload}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+              >
+                Download HTML
+              </button>
+              <button
+                onClick={handleDeploy}
+                className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+              >
+                Deploy to Vercel
+              </button>
             </div>
-
-            {/* Preview Content */}
-            <div className={`${styles.wrapper} p-6 sm:p-12`}>
-              <div className="min-h-[500px] text-center max-w-2xl mx-auto">
-                <h1 className="text-4xl font-bold mb-2">{data.productName}</h1>
-                <p className="text-lg text-gray-600 mb-6">{data.tagline}</p>
-                <p className="mb-6">{data.description}</p>
-                <ul className="text-left list-disc list-inside mb-8">
-                  {data.features.map((feat, i) => (
-                    <li key={i} className="mb-1">
-                      {feat}
-                    </li>
-                  ))}
-                </ul>
+          </div>
+          <div className={`${themeStyles.wrapper}`}>
+            <div className="min-h-[500px] text-center max-w-2xl mx-auto">
+              <h1 className="text-4xl font-bold mb-2">{data.productName}</h1>
+              <p className="text-lg mb-6">{data.description}</p>
+              <div className="space-y-4">
+                {data.features.map((feature, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <svg
+                      className="w-5 h-5 text-green-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span>{feature}</span>
+                  </div>
+                ))}
+              </div>
+              {data.ctaText && data.ctaLink && (
                 <a
                   href={data.ctaLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block px-6 py-3 rounded text-lg transition bg-black text-white hover:bg-gray-800"
+                  className={`inline-block mt-8 ${themeStyles.ctaButton}`}
                 >
                   {data.ctaText}
                 </a>
-              </div>
+              )}
             </div>
           </div>
-
-          {/* Action Buttons */}
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={handleDownload}
-              className="border border-black text-black px-4 py-2 rounded hover:bg-gray-100 transition"
-            >
-              Download HTML
-            </button>
-
-            <button
-              onClick={() => downloadZip(data)}
-              className="border border-black text-black px-4 py-2 rounded hover:bg-gray-100 transition"
-            >
-              Download ZIP
-            </button>
-
-            <button
-              onClick={handleDeploy}
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
-            >
-              Deploy to Vercel
-            </button>
-          </div>
         </div>
-      </main>
-
-      {/* Animation Styles */}
-      <style jsx>{`
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.6s ease-out forwards;
-        }
-      `}</style>
-    </>
+      </div>
+    </main>
   );
 }

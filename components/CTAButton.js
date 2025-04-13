@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { themeVariants } from "../utils/theme";
+import { generatedThemeVariants } from "../utils/theme";
 import { motion } from "framer-motion";
 
 export default function CTAButton({ label, href, variant = "primary", size = "md", theme = "light", fullWidth = false }) {
-  const themeStyles = themeVariants[theme];
+  const themeStyles = generatedThemeVariants[theme];
   const variants = {
     primary: themeStyles.ctaButton,
     secondary: themeStyles.ctaButton, // Fallback to primary style for now

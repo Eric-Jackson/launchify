@@ -4,16 +4,16 @@ import CTAButton from "../components/CTAButton";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100 text-gray-900 font-sans">
+    <main className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-gray-900 dark:text-white font-sans">
       {/* Header */}
       <Header />
 
       {/* Hero Section */}
       <div className="max-w-5xl mx-auto px-6 py-24 text-center">
-        <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-4">
+        <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-4 text-gray-900 dark:text-white">
           Build beautiful landing pages <br className="hidden sm:inline" /> in minutes.
         </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+        <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8">
           Launchify helps you generate, preview, and deploy conversion-ready SaaS landing pages with zero code.
         </p>
 
@@ -25,7 +25,7 @@ export default function Home() {
           <img
             src="/themes/light.png"
             alt="Launchify sample screenshot"
-            className="rounded-xl shadow-xl border max-w-full sm:max-w-3xl mx-auto"
+            className="rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 max-w-full sm:max-w-3xl mx-auto"
           />
         </div>
       </div>

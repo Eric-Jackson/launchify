@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Download, DownloadCloud, Twitter, Linkedin, Github } from "lucide-react";
 import LandingPage from "../landing/LandingPage";
-import { themeVariants } from "../../utils/theme";
+import { generatedThemeVariants } from "../../utils/theme";
 
 export default function BuilderPreview({ form, onFormChange }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,10 +24,12 @@ export default function BuilderPreview({ form, onFormChange }) {
 
   // Handle feature changes
   const handleFeatureChange = (index, field, value) => {
-    const updatedFeatures = [...(form.features || [])].map((feature, i) => 
-      i === index ? { ...feature, [field]: value } : feature
-    );
-    onFormChange("features", updatedFeatures);
+    const newFeatures = [...form.features];
+    newFeatures[index] = {
+      ...newFeatures[index],
+      [field]: value,
+    };
+    onFormChange("features", newFeatures);
   };
 
   // Toggle feature edit mode
@@ -112,8 +114,8 @@ export default function BuilderPreview({ form, onFormChange }) {
   };
 
   // Handle logo upload
-  const handleLogoUpload = (event) => {
-    const file = event.target.files[0];
+  const handleLogoUpload = (e) => {
+    const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -125,369 +127,331 @@ export default function BuilderPreview({ form, onFormChange }) {
 
   // Remove logo
   const handleRemoveLogo = () => {
-    onFormChange("logo", null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    onFormChange("logo", "");
   };
 
   return (
-    <div className="bg-white">
-      {/* Header */}
-      <div className="h-14 border-b flex items-center justify-between px-4">
-        <div className="flex items-center gap-2">
-          <h2 className="text-lg font-medium">Builder</h2>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleDownload}
-            className="border border-gray-300 text-gray-700 px-3 py-1.5 rounded hover:bg-gray-50 transition text-sm flex items-center gap-2"
-          >
-            <Download className="w-4 h-4" />
-            Download HTML
-          </button>
-          <button
-            onClick={handleDownloadZip}
-            className="border border-gray-300 text-gray-700 px-3 py-1.5 rounded hover:bg-gray-50 transition text-sm flex items-center gap-2"
-            disabled={isSubmitting}
-          >
-            <DownloadCloud className="w-4 h-4" />
-            Download ZIP
-          </button>
-          <button
-            onClick={handleDeploy}
-            className="bg-green-600 text-white px-3 py-1.5 rounded hover:bg-green-700 transition text-sm"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Deploying..." : "Deploy"}
-          </button>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex h-[calc(100vh-7rem)]">
-        {/* Builder Panel */}
-        <div className="w-96 border-r overflow-y-auto">
-          <div className="p-4 space-y-4 pb-16">
-            {/* Theme Selector */}
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Theme
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  onClick={() => onFormChange("theme", "light")}
-                  className={`p-2 border rounded-lg flex items-center justify-center gap-2 ${
-                    form.theme === "light" ? "border-indigo-500 bg-indigo-50" : "border-gray-200 hover:border-gray-300"
-                  }`}
-                >
-                  <div className="w-4 h-4 rounded-full bg-white border border-gray-300" />
-                  <span className="text-sm">Light</span>
-                </button>
-                <button
-                  onClick={() => onFormChange("theme", "dark")}
-                  className={`p-2 border rounded-lg flex items-center justify-center gap-2 ${
-                    form.theme === "dark" ? "border-indigo-500 bg-indigo-50" : "border-gray-200 hover:border-gray-300"
-                  }`}
-                >
-                  <div className="w-4 h-4 rounded-full bg-slate-900 border border-slate-700" />
-                  <span className="text-sm">Dark</span>
-                </button>
-                <button
-                  onClick={() => onFormChange("theme", "bold")}
-                  className={`p-2 border rounded-lg flex items-center justify-center gap-2 ${
-                    form.theme === "bold" ? "border-indigo-500 bg-indigo-50" : "border-gray-200 hover:border-gray-300"
-                  }`}
-                >
-                  <div className="w-4 h-4 rounded-full bg-yellow-500 border border-yellow-600" />
-                  <span className="text-sm">Bold</span>
-                </button>
-              </div>
+    <div className="flex h-[calc(100vh-7rem)]">
+      {/* Builder Panel */}
+      <div className="w-96 border-r border-gray-200 dark:border-gray-800 overflow-y-auto">
+        <div className="p-4 space-y-6 pb-16">
+          {/* Theme Selector */}
+          <div className="space-y-4">
+            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
+              Theme
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => onFormChange("theme", "light")}
+                className={`p-2 border rounded-lg flex items-center justify-center gap-2 ${
+                  form.theme === "light" 
+                    ? "border-indigo-500 bg-indigo-50 dark:border-indigo-400 dark:bg-indigo-900/50" 
+                    : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                }`}
+              >
+                <div className="w-4 h-4 rounded-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600" />
+                <span className="text-sm text-gray-900 dark:text-white">Light</span>
+              </button>
+              <button
+                onClick={() => onFormChange("theme", "dark")}
+                className={`p-2 border rounded-lg flex items-center justify-center gap-2 ${
+                  form.theme === "dark" 
+                    ? "border-indigo-500 bg-indigo-50 dark:border-indigo-400 dark:bg-indigo-900/50" 
+                    : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                }`}
+              >
+                <div className="w-4 h-4 rounded-full bg-slate-900 dark:bg-gray-800 border border-slate-700 dark:border-gray-600" />
+                <span className="text-sm text-gray-900 dark:text-white">Dark</span>
+              </button>
+              <button
+                onClick={() => onFormChange("theme", "bold")}
+                className={`p-2 border rounded-lg flex items-center justify-center gap-2 ${
+                  form.theme === "bold" 
+                    ? "border-indigo-500 bg-indigo-50 dark:border-indigo-400 dark:bg-indigo-900/50" 
+                    : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                }`}
+              >
+                <div className="w-4 h-4 rounded-full bg-yellow-500 dark:bg-yellow-600 border border-yellow-600 dark:border-yellow-700" />
+                <span className="text-sm text-gray-900 dark:text-white">Bold</span>
+              </button>
             </div>
+          </div>
 
-            {/* Logo Upload */}
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Logo
-              </label>
-              <div className="space-y-2">
-                {form.logo ? (
-                  <div className="relative group">
-                    <img
-                      src={form.logo}
-                      alt="Logo preview"
-                      className="w-auto max-h-[50px] object-contain border rounded-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleRemoveLogo}
-                      className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                      aria-label="Remove logo"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                  </div>
-                ) : (
-                  <div
-                    className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-indigo-500 transition"
-                    onClick={() => fileInputRef.current?.click()}
+          <div className="border-t border-gray-200 dark:border-gray-800" />
+
+          {/* Logo Upload */}
+          <div className="space-y-4">
+            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
+              Logo
+            </label>
+            <div className="space-y-2">
+              {form.logo ? (
+                <div className="relative group">
+                  <img
+                    src={form.logo}
+                    alt="Logo preview"
+                    className="w-auto max-h-[50px] object-contain border rounded-lg border-gray-200 dark:border-gray-700"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleRemoveLogo}
+                    className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    aria-label="Remove logo"
                   >
-                    <div className="text-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      <p className="mt-1 text-sm text-gray-500">Click to upload</p>
-                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              ) : (
+                <div
+                  className="w-32 h-32 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center cursor-pointer hover:border-indigo-500 dark:hover:border-indigo-400 transition"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <div className="text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mx-auto text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Click to upload</p>
                   </div>
-                )}
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleLogoUpload}
-                  accept="image/*"
-                  className="hidden"
-                />
-                <p className="text-xs text-gray-500">
-                  Recommended: Square image, max 512x512px
-                </p>
-              </div>
-            </div>
-
-            {/* Title */}
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Title <span className="text-red-500">*</span>
-              </label>
+                </div>
+              )}
               <input
-                value={form.title}
-                onChange={(e) => onFormChange("title", e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                placeholder="Your Product Name"
+                type="file"
+                ref={fileInputRef}
+                onChange={handleLogoUpload}
+                accept="image/*"
+                className="hidden"
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Recommended: Square image, max 512x512px
+              </p>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-200 dark:border-gray-800" />
+
+          {/* Title */}
+          <div className="space-y-4">
+            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
+              Title <span className="text-red-500">*</span>
+            </label>
+            <input
+              value={form.title}
+              onChange={(e) => onFormChange("title", e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+              placeholder="Your Product Name"
+            />
+          </div>
+
+          <div className="border-t border-gray-200 dark:border-gray-800" />
+
+          {/* Description */}
+          <div className="space-y-4">
+            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
+              Description <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              value={form.description}
+              onChange={(e) => onFormChange("description", e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+              rows="3"
+              placeholder="A brief description of your product"
+            />
+          </div>
+
+          <div className="border-t border-gray-200 dark:border-gray-800" />
+
+          {/* CTA Button */}
+          <div className="space-y-4">
+            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
+              Call to Action Button
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              <input
+                value={form.ctaText}
+                onChange={(e) => onFormChange("ctaText", e.target.value)}
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                placeholder="Button Text"
+              />
+              <input
+                value={form.ctaLink}
+                onChange={(e) => onFormChange("ctaLink", e.target.value)}
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                placeholder="Button Link"
               />
             </div>
+          </div>
 
-            {/* Description */}
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Description <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                value={form.description}
-                onChange={(e) => onFormChange("description", e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                rows="3"
-                placeholder="A brief description of your product"
-              />
-            </div>
+          <div className="border-t border-gray-200 dark:border-gray-800" />
 
-            {/* CTA Button */}
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Call to Action Button
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                <input
-                  value={form.ctaText}
-                  onChange={(e) => onFormChange("ctaText", e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  placeholder="Button Text"
-                />
-                <input
-                  value={form.ctaLink}
-                  onChange={(e) => onFormChange("ctaLink", e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  placeholder="Button Link"
-                />
-              </div>
-            </div>
-
-            {/* Features */}
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Features
-              </label>
-              <div className="space-y-2">
-                {form.features?.map((feature, index) => (
-                  <div 
-                    key={index} 
-                    className={`border rounded-lg p-4 space-y-2 relative ${
-                      !feature.title || !feature.description ? 'bg-yellow-50 border-yellow-200' : ''
-                    }`}
-                  >
-                    <div 
-                      className="flex items-center gap-2 cursor-pointer"
-                      onClick={() => toggleFeatureEdit(index)}
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center p-1">
-                        <svg 
-                          xmlns="http://www.w3.org/2000/svg" 
-                          className="h-6 w-6 text-gray-600"
-                          viewBox="0 0 24 24" 
-                          fill="currentColor"
-                        >
-                          <path d={availableIcons.find(icon => icon.id === feature.icon)?.path || ""} />
-                        </svg>
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-medium">{feature.title || "Untitled Feature"}</div>
-                        {feature.description && (
-                          <div className="text-sm text-gray-500 line-clamp-1">{feature.description}</div>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleRemoveFeature(index)}
-                          className="p-1.5 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition"
-                          aria-label="Remove feature"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                        <button
-                          onClick={() => toggleFeatureEdit(index)}
-                          className={`p-1.5 rounded-full ${
-                            editingFeature === index ? "bg-yellow-100 text-yellow-600" : "bg-gray-100 text-gray-600"
-                          } hover:bg-yellow-200 transition`}
-                          aria-label="Edit feature"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                    {editingFeature === index && (
-                      <div className="space-y-2 pt-2">
-                        <select
-                          value={feature.icon}
-                          onChange={(e) => handleFeatureChange(index, "icon", e.target.value)}
-                          className="w-full px-2 py-1 border rounded"
-                        >
-                          {availableIcons.map((icon) => (
-                            <option key={icon.id} value={icon.id}>
-                              {icon.label}
-                            </option>
-                          ))}
-                        </select>
-                        <input
-                          type="text"
-                          value={feature.title}
-                          onChange={(e) => handleFeatureChange(index, "title", e.target.value)}
-                          placeholder="Feature title"
-                          className="w-full px-2 py-1 border rounded"
-                        />
-                        <textarea
-                          value={feature.description}
-                          onChange={(e) => handleFeatureChange(index, "description", e.target.value)}
-                          placeholder="Feature description"
-                          className="w-full px-2 py-1 border rounded"
-                          rows="2"
-                        />
-                      </div>
-                    )}
-                  </div>
-                ))}
-                <button
-                  onClick={handleAddFeature}
-                  className="w-full border-2 border-dashed border-gray-300 rounded-lg p-4 text-gray-500 hover:border-gray-400 hover:text-gray-600 transition"
+          {/* Features */}
+          <div className="space-y-4">
+            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
+              Features
+            </label>
+            <div className="space-y-2">
+              {form.features?.map((feature, index) => (
+                <div 
+                  key={index} 
+                  className={`border rounded-lg p-4 space-y-2 relative ${
+                    !feature.title || !feature.description ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800' : 'border-gray-200 dark:border-gray-700'
+                  }`}
                 >
-                  + Add Feature
-                </button>
-              </div>
+                  <div 
+                    className="flex items-center gap-2 cursor-pointer"
+                    onClick={() => toggleFeatureEdit(index)}
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center p-1">
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        className="h-6 w-6 text-gray-600 dark:text-gray-400"
+                        viewBox="0 0 24 24" 
+                        fill="currentColor"
+                      >
+                        <path d={availableIcons.find(icon => icon.id === feature.icon)?.path || ""} />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-900 dark:text-white">{feature.title || "Untitled Feature"}</div>
+                      {feature.description && (
+                        <div className="text-sm text-gray-500 dark:text-gray-400 line-clamp-1">{feature.description}</div>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleRemoveFeature(index)}
+                        className="p-1.5 rounded-full bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-800 transition"
+                        aria-label="Remove feature"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => toggleFeatureEdit(index)}
+                        className={`p-1.5 rounded-full ${
+                          editingFeature === index 
+                            ? "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-600 dark:text-yellow-400" 
+                            : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+                        } hover:bg-yellow-200 dark:hover:bg-yellow-800 transition`}
+                        aria-label="Edit feature"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  {editingFeature === index && (
+                    <div className="space-y-2 pt-2">
+                      <select
+                        value={feature.icon}
+                        onChange={(e) => handleFeatureChange(index, "icon", e.target.value)}
+                        className="w-full px-2 py-1 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white"
+                      >
+                        {availableIcons.map((icon) => (
+                          <option key={icon.id} value={icon.id}>
+                            {icon.label}
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        type="text"
+                        value={feature.title}
+                        onChange={(e) => handleFeatureChange(index, "title", e.target.value)}
+                        placeholder="Feature title"
+                        className="w-full px-2 py-1 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                      />
+                      <textarea
+                        value={feature.description}
+                        onChange={(e) => handleFeatureChange(index, "description", e.target.value)}
+                        placeholder="Feature description"
+                        className="w-full px-2 py-1 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                        rows="2"
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+              <button
+                onClick={handleAddFeature}
+                className="w-full border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 text-gray-500 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition"
+              >
+                + Add Feature
+              </button>
             </div>
+          </div>
 
-            {/* Social Links */}
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Social Links
-              </label>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <Twitter className="w-5 h-5 text-[#1DA1F2]" />
-                  <div className="flex-1 flex items-center gap-1 bg-gray-50 border rounded-lg px-3 py-2">
-                    <span className="text-gray-400 text-sm">@</span>
-                    <input
-                      type="text"
-                      value={form.twitter?.replace('https://twitter.com/', '') || ''}
-                      onChange={(e) => onFormChange("twitter", e.target.value ? `https://twitter.com/${e.target.value}` : '')}
-                      placeholder="username"
-                      className="flex-1 bg-transparent text-sm focus:outline-none"
-                    />
-                  </div>
+          <div className="border-t border-gray-200 dark:border-gray-800" />
+
+          {/* Social Links */}
+          <div className="space-y-4">
+            <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">
+              Social Links
+            </label>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <Twitter className="w-5 h-5 text-[#1DA1F2]" />
+                <div className="flex-1 flex items-center gap-1 bg-gray-50 dark:bg-gray-800 border rounded-lg px-3 py-2 border-gray-200 dark:border-gray-700">
+                  <span className="text-gray-400 dark:text-gray-500 text-sm">@</span>
+                  <input
+                    type="text"
+                    value={form.twitter?.replace('https://twitter.com/', '') || ''}
+                    onChange={(e) => onFormChange("twitter", e.target.value ? `https://twitter.com/${e.target.value}` : '')}
+                    placeholder="username"
+                    className="flex-1 bg-transparent text-sm focus:outline-none text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                  />
                 </div>
-                <div className="flex items-center gap-3">
-                  <Linkedin className="w-5 h-5 text-[#0A66C2]" />
-                  <div className="flex-1 flex items-center gap-1 bg-gray-50 border rounded-lg px-3 py-2">
-                    <span className="text-gray-400 text-sm">in/</span>
-                    <input
-                      type="text"
-                      value={form.linkedin?.replace('https://linkedin.com/in/', '') || ''}
-                      onChange={(e) => onFormChange("linkedin", e.target.value ? `https://linkedin.com/in/${e.target.value}` : '')}
-                      placeholder="username"
-                      className="flex-1 bg-transparent text-sm focus:outline-none"
-                    />
-                  </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Linkedin className="w-5 h-5 text-[#0A66C2]" />
+                <div className="flex-1 flex items-center gap-1 bg-gray-50 dark:bg-gray-800 border rounded-lg px-3 py-2 border-gray-200 dark:border-gray-700">
+                  <span className="text-gray-400 dark:text-gray-500 text-sm">in/</span>
+                  <input
+                    type="text"
+                    value={form.linkedin?.replace('https://linkedin.com/in/', '') || ''}
+                    onChange={(e) => onFormChange("linkedin", e.target.value ? `https://linkedin.com/in/${e.target.value}` : '')}
+                    placeholder="username"
+                    className="flex-1 bg-transparent text-sm focus:outline-none text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                  />
                 </div>
-                <div className="flex items-center gap-3">
-                  <Github className="w-5 h-5 text-gray-900" />
-                  <div className="flex-1 flex items-center gap-1 bg-gray-50 border rounded-lg px-3 py-2">
-                    <span className="text-gray-400 text-sm">github.com/</span>
-                    <input
-                      type="text"
-                      value={form.github?.replace('https://github.com/', '') || ''}
-                      onChange={(e) => onFormChange("github", e.target.value ? `https://github.com/${e.target.value}` : '')}
-                      placeholder="username"
-                      className="flex-1 bg-transparent text-sm focus:outline-none"
-                    />
-                  </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Github className="w-5 h-5 text-gray-900 dark:text-white" />
+                <div className="flex-1 flex items-center gap-1 bg-gray-50 dark:bg-gray-800 border rounded-lg px-3 py-2 border-gray-200 dark:border-gray-700">
+                  <span className="text-gray-400 dark:text-gray-500 text-sm">github.com/</span>
+                  <input
+                    type="text"
+                    value={form.github?.replace('https://github.com/', '') || ''}
+                    onChange={(e) => onFormChange("github", e.target.value ? `https://github.com/${e.target.value}` : '')}
+                    placeholder="username"
+                    className="flex-1 bg-transparent text-sm focus:outline-none text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                  />
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Preview */}
-        <div className="flex-1 overflow-auto p-4">
-          <div className="rounded-lg border shadow-lg overflow-hidden flex flex-col relative">
+      {/* Preview Panel */}
+      <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
+        <div className="p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
             {/* Browser Chrome */}
-            <div className="h-10 border-b flex items-center px-4 gap-2 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-500 shadow-sm" />
-                <div className="w-3 h-3 rounded-full bg-yellow-500 shadow-sm" />
-                <div className="w-3 h-3 rounded-full bg-green-500 shadow-sm" />
+            <div className="flex items-center justify-between px-4 py-2 bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
               </div>
-              <div className="flex-1 flex items-center justify-center">
-                <div className="flex items-center gap-2 bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-sm">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a5 5 0 1110 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
-                  </svg>
-                  <span className="text-sm text-gray-600 font-medium">
-                    {form.title || "Preview"}
-                  </span>
-                </div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                {form.title || "Preview"}
               </div>
-              <div className="flex items-center gap-2">
-                <button className="p-1 rounded-full hover:bg-white/50 transition">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5h-4m4 0v-4m0 4l-5-5" />
-                  </svg>
-                </button>
-                <button className="p-1 rounded-full hover:bg-white/50 transition">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                </button>
-              </div>
+              <div className="w-12"></div>
             </div>
-            {/* Preview Content */}
-            <div className="flex-1 overflow-auto relative">
-              <div className="w-full">
-                <LandingPage form={form} />
-              </div>
-            </div>
+            <LandingPage form={form} theme={form.theme} />
           </div>
         </div>
       </div>

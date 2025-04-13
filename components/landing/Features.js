@@ -1,8 +1,8 @@
-import { themeVariants } from "../../utils/theme";
+import { generatedThemeVariants } from "../../utils/theme";
 import FeatureCard from "./FeatureCard";
 
-export default function Features({ features, theme = "light" }) {
-  const themeStyles = themeVariants[theme];
+export default function Features({ features = [], theme = "light" }) {
+  const themeStyles = generatedThemeVariants[theme];
   
   return (
     <div className={`py-24 ${themeStyles.features}`}>
