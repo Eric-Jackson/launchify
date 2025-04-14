@@ -99,15 +99,17 @@ export default function BuilderPreview({ form, onFormChange }) {
         body: JSON.stringify(form),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        throw new Error("Deployment failed");
+        console.error("Deployment error response:", data);
+        throw new Error(data.error || "Deployment failed");
       }
 
-      const data = await res.json();
       window.open(data.url, "_blank");
     } catch (error) {
       console.error("Deployment error:", error);
-      alert("Deployment failed 😢");
+      alert(`Deployment failed: ${error.message}\n\nCheck the console for more details.`);
     } finally {
       setIsSubmitting(false);
     }
@@ -449,7 +451,22 @@ export default function BuilderPreview({ form, onFormChange }) {
               <div className="text-xs text-gray-500 dark:text-gray-400">
                 {form.title || "Preview"}
               </div>
-              <div className="w-12"></div>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={handleDownload}
+                  className="inline-flex items-center px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+                >
+                  <Download className="w-4 h-4 mr-1" />
+                  Download
+                </button>
+                <button
+                  onClick={handleDeploy}
+                  className="inline-flex items-center px-3 py-1 border border-transparent rounded text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+                >
+                  <DownloadCloud className="w-4 h-4 mr-1" />
+                  Deploy
+                </button>
+              </div>
             </div>
             <LandingPage form={form} theme={form.theme} />
           </div>
